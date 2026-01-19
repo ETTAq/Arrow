@@ -15,6 +15,7 @@ public class Shoot : MonoBehaviour
     private bool isCharging = false;
 
     private Camera mainCam;
+    private Vector3 clickPosition; // 클릭한 위치 저장
 
     private void Awake()
     {
@@ -44,14 +45,7 @@ public class Shoot : MonoBehaviour
 
     void Update()
     {
-        // 마우스 위치 → 월드 좌표 변환
-        Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = 0f;
-
-        // 항상 마우스 방향 바라보기
-        Vector3 direction = mouseWorldPos - transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        Vector3 mouseWorldPos = LookAtMouse();
 
         // ───────────────────── 충전 로직 ─────────────────────
         if (Input.GetMouseButtonDown(0))
@@ -59,6 +53,13 @@ public class Shoot : MonoBehaviour
             isCharging = true;
             currentChargeTime = 0f;
             chargeRing.enabled = true;
+
+            // 클릭한 위치를 저장
+            clickPosition = mouseWorldPos;
+
+            // 커서 고정 및 숨김
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
         }
 
         if (Input.GetMouseButton(0) && isCharging)
@@ -69,7 +70,8 @@ public class Shoot : MonoBehaviour
             float chargeRatio = currentChargeTime / maxChargeTime;
             float radius = chargeRatio * maxRadius;
 
-            UpdateChargeRing(mouseWorldPos, radius);
+            // 클릭 위치에 고정된 링 업데이트
+            UpdateChargeRing(clickPosition, radius);
 
             if (showDebugText)
                 Debug.Log($"충전: {chargeRatio:P1} | 반지름: {radius:F2}");
@@ -82,14 +84,34 @@ public class Shoot : MonoBehaviour
 
             float chargeRatio = currentChargeTime / maxChargeTime;
             Debug.Log($"발사 완료! 충전량: {chargeRatio:P1}");
+
+            // 커서 원래대로 복원
+            //Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
         }
+    }
+
+    private Vector3 LookAtMouse()
+    {
+        // 충전 중일 때는 새로운 마우스 위치를 반환하지 않음
+        if (isCharging)
+            return clickPosition;
+
+        // 마우스 위치 → 월드 좌표 변환
+        Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0f;
+
+        // 마우스 방향 바라보기
+        Vector3 direction = mouseWorldPos - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        return mouseWorldPos;
     }
 
     private void UpdateChargeRing(Vector3 center, float radius)
     {
         chargeRing.enabled = true;
 
-        // 색상: 충전 비율에 따라 변화
         float ringRatio = radius / maxRadius;
         Color innerColor = new Color(1f, 1f, 0.6f, 0.3f);
         Color outerColor = new Color(0f, 0f, 0f, 0.95f);
@@ -98,15 +120,12 @@ public class Shoot : MonoBehaviour
         chargeRing.startColor = ringColor;
         chargeRing.endColor = ringColor;
 
-        // 링 두께를 반지름에 따라 조절
-        // 예: 최소 0.02, 최대 0.12
         float dynamicWidth = Mathf.Lerp(0.02f, ringWidth, ringRatio);
         chargeRing.startWidth = dynamicWidth;
         chargeRing.endWidth = dynamicWidth;
 
         DrawSingleCircle(chargeRing, center, radius);
     }
-
 
     private void DrawSingleCircle(LineRenderer lr, Vector3 center, float radius)
     {
