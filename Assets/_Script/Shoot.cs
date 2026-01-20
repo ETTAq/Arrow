@@ -3,25 +3,30 @@ using UnityEngine;
 public class Shoot : MonoBehaviour
 {
     [Header("───── 충전 관련 설정 ─────")]
-    [SerializeField] private float maxChargeTime = 1.5f;   // 100%까지 걸리는 시간 (초)
-    [SerializeField] private float maxRadius = 5f;         // 최대 반지름
-    [SerializeField] private float ringWidth = 0.12f;      // 링 두께
+    [SerializeField] private float maxChargeTime = 1.5f;
+    [SerializeField] private float maxRadius = 5f;
+    [SerializeField] private float ringWidth = 0.12f;
 
     [Header("───── 디버깅용 (선택) ─────")]
     [SerializeField] private bool showDebugText = false;
+
+    [Header("───── Bow 스프라이트 설정 ─────")]
+    [SerializeField] private Sprite normalBowSprite;       // 기본 Bow 스프라이트
+    [SerializeField] private Sprite chargingBowSprite;     // 0~50% 충전
+    [SerializeField] private Sprite halfChargedBowSprite;  // 50% 이상 ~ 99%
+    [SerializeField] private Sprite fullyChargedBowSprite; // 100% 충전
 
     private LineRenderer chargeRing;
     private float currentChargeTime = 0f;
     private bool isCharging = false;
 
     private Camera mainCam;
-    private Vector3 clickPosition; // 클릭한 위치 저장
+    private Vector3 clickPosition;
 
     private void Awake()
     {
         mainCam = Camera.main;
 
-        // 단일 링 LineRenderer 생성
         GameObject ringObj = new GameObject("ChargeRing");
         ringObj.transform.parent = transform;
         chargeRing = ringObj.AddComponent<LineRenderer>();
@@ -31,7 +36,7 @@ public class Shoot : MonoBehaviour
 
     private void SetupRing(LineRenderer lr)
     {
-        lr.positionCount = 96; // 부드러운 원형
+        lr.positionCount = 96;
         lr.startWidth = ringWidth;
         lr.endWidth = ringWidth;
         lr.useWorldSpace = true;
@@ -47,19 +52,14 @@ public class Shoot : MonoBehaviour
     {
         Vector3 mouseWorldPos = LookAtMouse();
 
-        // ───────────────────── 충전 로직 ─────────────────────
         if (Input.GetMouseButtonDown(0))
         {
             isCharging = true;
             currentChargeTime = 0f;
             chargeRing.enabled = true;
-
-            // 클릭한 위치를 저장
             clickPosition = mouseWorldPos;
 
-            // 커서 고정 및 숨김
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
+            ChangeBowSprites(chargingBowSprite);
         }
 
         if (Input.GetMouseButton(0) && isCharging)
@@ -70,8 +70,21 @@ public class Shoot : MonoBehaviour
             float chargeRatio = currentChargeTime / maxChargeTime;
             float radius = chargeRatio * maxRadius;
 
-            // 클릭 위치에 고정된 링 업데이트
             UpdateChargeRing(clickPosition, radius);
+
+            // ───── 차징 비율에 따른 Bow 스프라이트 변경 ─────
+            if (chargeRatio >= 1f)
+            {
+                ChangeBowSprites(fullyChargedBowSprite);
+            }
+            else if (chargeRatio >= 0.5f)
+            {
+                ChangeBowSprites(halfChargedBowSprite);
+            }
+            else
+            {
+                ChangeBowSprites(chargingBowSprite);
+            }
 
             if (showDebugText)
                 Debug.Log($"충전: {chargeRatio:P1} | 반지름: {radius:F2}");
@@ -85,23 +98,18 @@ public class Shoot : MonoBehaviour
             float chargeRatio = currentChargeTime / maxChargeTime;
             Debug.Log($"발사 완료! 충전량: {chargeRatio:P1}");
 
-            // 커서 원래대로 복원
-            //Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
+            ChangeBowSprites(normalBowSprite);
         }
     }
 
     private Vector3 LookAtMouse()
     {
-        // 충전 중일 때는 새로운 마우스 위치를 반환하지 않음
         if (isCharging)
             return clickPosition;
 
-        // 마우스 위치 → 월드 좌표 변환
         Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0f;
 
-        // 마우스 방향 바라보기
         Vector3 direction = mouseWorldPos - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle);
@@ -141,6 +149,18 @@ public class Shoot : MonoBehaviour
                 0f
             );
             lr.SetPosition(j, point);
+        }
+    }
+
+    private void ChangeBowSprites(Sprite newSprite)
+    {
+        SpriteRenderer[] childRenderers = GetComponentsInChildren<SpriteRenderer>();
+        foreach (var sr in childRenderers)
+        {
+            if (sr.CompareTag("Bow"))
+            {
+                sr.sprite = newSprite;
+            }
         }
     }
 }
