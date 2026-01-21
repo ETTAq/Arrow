@@ -16,6 +16,9 @@ public class Shoot : MonoBehaviour
     [SerializeField] private Sprite halfChargedBowSprite;  // 50% 이상 ~ 99%
     [SerializeField] private Sprite fullyChargedBowSprite; // 100% 충전
 
+    [Header("───── 프리팹 ─────")]
+    public GameObject arrowPref;
+
     private LineRenderer chargeRing;
     private float currentChargeTime = 0f;
     private bool isCharging = false;
@@ -96,10 +99,47 @@ public class Shoot : MonoBehaviour
             chargeRing.enabled = false;
 
             float chargeRatio = currentChargeTime / maxChargeTime;
-            Debug.Log($"발사 완료! 충전량: {chargeRatio:P1}");
+            float power = chargeRatio * 20f; // 튜닝값
+
+            // Bow 태그 자식 위치마다 화살 생성
+            SpriteRenderer[] childRenderers = GetComponentsInChildren<SpriteRenderer>();
+            foreach (var sr in childRenderers)
+            {
+                if (sr.CompareTag("Bow"))
+                {
+                    GameObject arrowObj = Instantiate(arrowPref.gameObject, sr.transform.position, transform.rotation);
+
+                    Arrow arrowScript = arrowObj.GetComponent<Arrow>();
+                    if (arrowScript != null)
+                    {
+                        Vector2 dir = transform.right;
+
+                        // 현재 활의 방향 각도
+                        float baseAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+                        // 위로 올릴 각도
+                        float angleOffset = 5f;
+
+                        // 최대 허용 각도
+                        float maxAngle = 60f;
+
+                        // 최종 각도 = 기본 각도 + 오프셋, 단 최대 각도 제한
+                        float finalAngle = Mathf.Clamp(baseAngle + angleOffset, -maxAngle, maxAngle);
+
+                        // 최종 방향 벡터 계산
+                        float rad = finalAngle * Mathf.Deg2Rad;
+                        Vector2 finalDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+
+                        arrowScript.Launch(finalDir.normalized, power);
+                    }
+
+                }
+            }
 
             ChangeBowSprites(normalBowSprite);
         }
+
+
     }
 
     private Vector3 LookAtMouse()
