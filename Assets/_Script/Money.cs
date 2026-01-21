@@ -34,7 +34,7 @@ public class Money : MonoBehaviour
         if (autoUpdate) UpdateText();
     }
 
-    public void AddValue(float delta)
+    public void ChangeValue(float delta)
     {
         value += delta;
         if (autoUpdate) UpdateText();
