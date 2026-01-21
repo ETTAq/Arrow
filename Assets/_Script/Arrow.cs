@@ -26,7 +26,7 @@ public class Arrow : MonoBehaviour
 
     private void Update()
     {
-        // ÀÌµ¿ ÁßÀÏ ¶§ ÁøÇà ¹æÇâ¿¡ ¸ÂÃç È¸Àü
+        // ì´ë™ ì¤‘ì¼ ë•Œ ì§„í–‰ ë°©í–¥ì— ë§ì¶° íšŒì „
         if (!isStuck && rb != null && rb.linearVelocity.sqrMagnitude > 0.01f)
         {
             Vector2 vel = rb.linearVelocity;
@@ -47,14 +47,14 @@ public class Arrow : MonoBehaviour
             rb.angularVelocity = 0f;
             rb.simulated = false;
 
-            // Æ®¸®°Å Ãæµ¹ ½ÃÁ¡¿¡¼­ È­»ì ³¡ÀÌ ´êµµ·Ï º¸Á¤
-            // ¿©±â¼­´Â ´Ü¼øÈ÷ ÇöÀç À§Ä¡ À¯ÁöÇÏ°Å³ª, ColliderÀÇ ClosestPoint¸¦ È°¿ë
+            // íŠ¸ë¦¬ê±° ì¶©ëŒ ì‹œì ì—ì„œ í™”ì‚´ ëì´ ë‹¿ë„ë¡ ë³´ì •
+            // ì—¬ê¸°ì„œëŠ” ë‹¨ìˆœíˆ í˜„ì¬ ìœ„ì¹˜ ìœ ì§€í•˜ê±°ë‚˜, Colliderì˜ ClosestPointë¥¼ í™œìš©
             Vector3 hitPoint = other.ClosestPoint(transform.position);
-            Vector3 arrowTip = transform.position; // PivotÀ» È­»ì ³¡À¸·Î ¿Å°åÀ¸¹Ç·Î Transform ÀÚÃ¼°¡ ³¡ À§Ä¡
+            Vector3 arrowTip = transform.position; // Pivotì„ í™”ì‚´ ëìœ¼ë¡œ ì˜®ê²¼ìœ¼ë¯€ë¡œ Transform ìì²´ê°€ ë ìœ„ì¹˜
             Vector3 offset = hitPoint - arrowTip;
             transform.position += offset;
 
-            // ÂøÅº Á÷ÈÄ È¸Àü°ª ÀúÀå
+            // ì°©íƒ„ ì§í›„ íšŒì „ê°’ ì €ì¥
             Quaternion impactRotation = transform.rotation;
 
             StartCoroutine(RotateShakeAndDisappear(impactRotation));
@@ -72,13 +72,13 @@ public class Arrow : MonoBehaviour
             float strength = Mathf.Lerp(15f, 0f, elapsed / duration);
             float shakeAngle = Mathf.Sin(elapsed * 40f) * strength;
 
-            // ÂøÅº Á÷ÈÄ È¸Àü°ªÀ» ±âÁØÀ¸·Î Èçµé¸²
+            // ì°©íƒ„ ì§í›„ íšŒì „ê°’ì„ ê¸°ì¤€ìœ¼ë¡œ í”ë“¤ë¦¼
             transform.rotation = impactRotation * Quaternion.Euler(0, 0, shakeAngle);
 
             yield return null;
         }
 
-        // ÃÖÁ¾ÀûÀ¸·Î ÂøÅº Á÷ÈÄ °¢µµ·Î º¹±Í
+        // ìµœì¢…ì ìœ¼ë¡œ ì°©íƒ„ ì§í›„ ê°ë„ë¡œ ë³µê·€
         transform.rotation = impactRotation;
 
         yield return new WaitForSeconds(5f);

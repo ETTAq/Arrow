@@ -30,7 +30,7 @@ public class ArrowPool : MonoBehaviour
         }
         else
         {
-            // Ç® ºÎÁ· ½Ã »õ·Î »ı¼º
+            // í’€ ë¶€ì¡± ì‹œ ìƒˆë¡œ ìƒì„±
             return Instantiate(arrowPrefab, position, rotation);
         }
     }

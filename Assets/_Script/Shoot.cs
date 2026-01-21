@@ -2,21 +2,21 @@ using UnityEngine;
 
 public class Shoot : MonoBehaviour
 {
-    [Header("¦¡¦¡¦¡¦¡¦¡ ÃæÀü °ü·Ã ¼³Á¤ ¦¡¦¡¦¡¦¡¦¡")]
+    [Header("â”€â”€â”€â”€â”€ ì¶©ì „ ê´€ë ¨ ì„¤ì • â”€â”€â”€â”€â”€")]
     [SerializeField] private float maxChargeTime = 1.5f;
     [SerializeField] private float maxRadius = 5f;
     [SerializeField] private float ringWidth = 0.12f;
 
-    [Header("¦¡¦¡¦¡¦¡¦¡ µğ¹ö±ë¿ë (¼±ÅÃ) ¦¡¦¡¦¡¦¡¦¡")]
+    [Header("â”€â”€â”€â”€â”€ ë””ë²„ê¹…ìš© (ì„ íƒ) â”€â”€â”€â”€â”€")]
     [SerializeField] private bool showDebugText = false;
 
-    [Header("¦¡¦¡¦¡¦¡¦¡ Bow ½ºÇÁ¶óÀÌÆ® ¼³Á¤ ¦¡¦¡¦¡¦¡¦¡")]
-    [SerializeField] private Sprite normalBowSprite;       // ±âº» Bow ½ºÇÁ¶óÀÌÆ®
-    [SerializeField] private Sprite chargingBowSprite;     // 0~50% ÃæÀü
-    [SerializeField] private Sprite halfChargedBowSprite;  // 50% ÀÌ»ó ~ 99%
-    [SerializeField] private Sprite fullyChargedBowSprite; // 100% ÃæÀü
+    [Header("â”€â”€â”€â”€â”€ Bow ìŠ¤í”„ë¼ì´íŠ¸ ì„¤ì • â”€â”€â”€â”€â”€")]
+    [SerializeField] private Sprite normalBowSprite;       // ê¸°ë³¸ Bow ìŠ¤í”„ë¼ì´íŠ¸
+    [SerializeField] private Sprite chargingBowSprite;     // 0~50% ì¶©ì „
+    [SerializeField] private Sprite halfChargedBowSprite;  // 50% ì´ìƒ ~ 99%
+    [SerializeField] private Sprite fullyChargedBowSprite; // 100% ì¶©ì „
 
-    [Header("¦¡¦¡¦¡¦¡¦¡ ÇÁ¸®ÆÕ ¦¡¦¡¦¡¦¡¦¡")]
+    [Header("â”€â”€â”€â”€â”€ í”„ë¦¬íŒ¹ â”€â”€â”€â”€â”€")]
     public GameObject arrowPref;
 
     private LineRenderer chargeRing;
@@ -75,7 +75,7 @@ public class Shoot : MonoBehaviour
 
             UpdateChargeRing(clickPosition, radius);
 
-            // ¦¡¦¡¦¡¦¡¦¡ Â÷Â¡ ºñÀ²¿¡ µû¸¥ Bow ½ºÇÁ¶óÀÌÆ® º¯°æ ¦¡¦¡¦¡¦¡¦¡
+            // â”€â”€â”€â”€â”€ ì°¨ì§• ë¹„ìœ¨ì— ë”°ë¥¸ Bow ìŠ¤í”„ë¼ì´íŠ¸ ë³€ê²½ â”€â”€â”€â”€â”€
             if (chargeRatio >= 1f)
             {
                 ChangeBowSprites(fullyChargedBowSprite);
@@ -90,7 +90,7 @@ public class Shoot : MonoBehaviour
             }
 
             if (showDebugText)
-                Debug.Log($"ÃæÀü: {chargeRatio:P1} | ¹İÁö¸§: {radius:F2}");
+                Debug.Log($"ì¶©ì „: {chargeRatio:P1} | ë°˜ì§€ë¦„: {radius:F2}");
         }
 
         if (Input.GetMouseButtonUp(0) && isCharging)
@@ -99,9 +99,9 @@ public class Shoot : MonoBehaviour
             chargeRing.enabled = false;
 
             float chargeRatio = currentChargeTime / maxChargeTime;
-            float power = chargeRatio * 20f; // Æ©´×°ª
+            float power = chargeRatio * 20f; // íŠœë‹ê°’
 
-            // Bow ÅÂ±× ÀÚ½Ä À§Ä¡¸¶´Ù È­»ì »ı¼º
+            // Bow íƒœê·¸ ìì‹ ìœ„ì¹˜ë§ˆë‹¤ í™”ì‚´ ìƒì„±
             SpriteRenderer[] childRenderers = GetComponentsInChildren<SpriteRenderer>();
             foreach (var sr in childRenderers)
             {
@@ -114,24 +114,24 @@ public class Shoot : MonoBehaviour
                     {
                         Vector2 dir = transform.right;
 
-                        // ÇöÀç È°ÀÇ ¹æÇâ °¢µµ
+                        // í˜„ì¬ í™œì˜ ë°©í–¥ ê°ë„
                         float baseAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                        // À§·Î ¿Ã¸± °¢µµ
+                        // ìœ„ë¡œ ì˜¬ë¦´ ê°ë„
                         float angleOffset = 5f;
 
-                        // 90µµ¸¦ ³ÑÀ¸¸é ¿ÀÇÁ¼Â ¹İÀü
+                        // 90ë„ë¥¼ ë„˜ìœ¼ë©´ ì˜¤í”„ì…‹ ë°˜ì „
                         if (baseAngle > 90f || baseAngle < -90f)
                         {
-                            Debug.Log("¿ÀÇÁ¼Â ¹İÀü");
+                            Debug.Log("ì˜¤í”„ì…‹ ë°˜ì „");
                             angleOffset = -angleOffset;
                         }
-                        else { Debug.Log("¿ÀÇÁ¼Â Á¤¹æÇâ"); }
+                        else { Debug.Log("ì˜¤í”„ì…‹ ì •ë°©í–¥"); }
 
-                        // ÃÖÁ¾ °¢µµ = ±âº» °¢µµ + ¿ÀÇÁ¼Â
+                        // ìµœì¢… ê°ë„ = ê¸°ë³¸ ê°ë„ + ì˜¤í”„ì…‹
                         float finalAngle = baseAngle + angleOffset;
 
-                        // ÃÖÁ¾ ¹æÇâ º¤ÅÍ °è»ê
+                        // ìµœì¢… ë°©í–¥ ë²¡í„° ê³„ì‚°
                         float rad = finalAngle * Mathf.Deg2Rad;
                         Vector2 finalDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 

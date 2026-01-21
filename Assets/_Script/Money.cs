@@ -9,10 +9,10 @@ public class Money : MonoBehaviour
     public Text targetText;
 
     [Header("Options")]
-    public bool useInteger = true;       // ¼Ò¼öÁ¡ Á¦°Å ¿©ºÎ
-    public bool useSuffix = true;        // ´ÜÀ§ º¯È¯ ¿©ºÎ
-    public bool autoUpdate = true;       // °ª º¯°æ ½Ã ÀÚµ¿ ¹İ¿µ ¿©ºÎ
-    public bool useUpperCaseSuffix = false; // ´ÜÀ§¸¦ ´ë¹®ÀÚ·Î Ç¥±âÇÒÁö ¿©ºÎ
+    public bool useInteger = true;       // ì†Œìˆ˜ì  ì œê±° ì—¬ë¶€
+    public bool useSuffix = true;        // ë‹¨ìœ„ ë³€í™˜ ì—¬ë¶€
+    public bool autoUpdate = true;       // ê°’ ë³€ê²½ ì‹œ ìë™ ë°˜ì˜ ì—¬ë¶€
+    public bool useUpperCaseSuffix = false; // ë‹¨ìœ„ë¥¼ ëŒ€ë¬¸ìë¡œ í‘œê¸°í• ì§€ ì—¬ë¶€
 
     [Header("Value")]
     [SerializeField] private float value = 0f;
@@ -103,18 +103,18 @@ public class Money : MonoBehaviour
     }
 
     /// <summary>
-    /// ´ÜÀ§ ¹®ÀÚ¿­ »ı¼º (aa, ab, ac ¡¦)
+    /// ë‹¨ìœ„ ë¬¸ìì—´ ìƒì„± (aa, ab, ac â€¦)
     /// </summary>
     private string GetSuffix(int index)
     {
         if (index == 0) return "";
 
-        // ±âº» ´ÜÀ§: k, m, b, t
+        // ê¸°ë³¸ ë‹¨ìœ„: k, m, b, t
         string[] baseSuffixes = { "k", "m", "b", "t" };
         if (index <= baseSuffixes.Length)
             return baseSuffixes[index - 1];
 
-        // ±× ÀÌ»óÀº aa, ab, ac ¡¦ ½ÄÀ¸·Î »ı¼º
+        // ê·¸ ì´ìƒì€ aa, ab, ac â€¦ ì‹ìœ¼ë¡œ ìƒì„±
         index -= baseSuffixes.Length;
 
         StringBuilder sb = new StringBuilder();

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("¦¡¦¡¦¡¦¡¦¡ ¹öÆ° ¦¡¦¡¦¡¦¡¦¡")]
+    [Header("â”€â”€â”€â”€â”€ ë²„íŠ¼ â”€â”€â”€â”€â”€")]
     public Button getPointUpgrade;
     public Button autoGetPointUpgrade;
     public Button shotSpeedUpgrade;
