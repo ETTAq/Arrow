@@ -120,11 +120,16 @@ public class Shoot : MonoBehaviour
                         // 위로 올릴 각도
                         float angleOffset = 5f;
 
-                        // 최대 허용 각도
-                        float maxAngle = 60f;
+                        // 90도를 넘으면 오프셋 반전
+                        if (baseAngle > 90f || baseAngle < -90f)
+                        {
+                            Debug.Log("오프셋 반전");
+                            angleOffset = -angleOffset;
+                        }
+                        else { Debug.Log("오프셋 정방향"); }
 
-                        // 최종 각도 = 기본 각도 + 오프셋, 단 최대 각도 제한
-                        float finalAngle = Mathf.Clamp(baseAngle + angleOffset, -maxAngle, maxAngle);
+                        // 최종 각도 = 기본 각도 + 오프셋
+                        float finalAngle = baseAngle + angleOffset;
 
                         // 최종 방향 벡터 계산
                         float rad = finalAngle * Mathf.Deg2Rad;
@@ -132,6 +137,7 @@ public class Shoot : MonoBehaviour
 
                         arrowScript.Launch(finalDir.normalized, power);
                     }
+
 
                 }
             }
