@@ -102,6 +102,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9319999cc1c3944b950be9d4067c65c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragAscending: 0.8
+  dragDescending: 0.05
+  extraForwardForce: 10
+  extraDownForce: 6
+  forceDuration: 10
+  minShakeAngle: 3
+  maxShakeAngle: 9
+  maxImpactSpeed: 20
+  shakeMultiplier: 1.15
 --- !u!50 &4315200599993624071
 Rigidbody2D:
   serializedVersion: 5

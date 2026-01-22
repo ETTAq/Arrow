@@ -2,9 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Text;
+using System;
 
 public class Money : MonoBehaviour
 {
+    // 싱글톤 패턴
+    public static Money Instance;
+
     [Header("Target Text")]
     public Text targetText;
 
@@ -22,6 +26,19 @@ public class Money : MonoBehaviour
 
     private Coroutine animationCoroutine;
 
+    private void Awake()
+    {
+        // 싱글톤 인스턴스 설정
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Update()
     {
         if (autoUpdate)
@@ -38,6 +55,24 @@ public class Money : MonoBehaviour
     {
         value += delta;
         if (autoUpdate) UpdateText();
+        Debug.Log("Money changed: " + value);
+    }
+
+    public bool TrySpendMoney(float delta)
+    {
+        // delta만큼 돈을 쓰려고 시도 (충분한 돈이 있으면 차감)
+        // 소모 성공 여부 반환 
+
+        if (delta > value)
+        { 
+            return false; 
+        }
+        else
+        {
+            value -= delta;
+            if (autoUpdate) UpdateText();
+            return true;
+        }
     }
 
     public void AnimateToValue(float targetValue, float duration = 1f)

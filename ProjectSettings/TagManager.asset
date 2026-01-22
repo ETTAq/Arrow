@@ -8,6 +8,7 @@ TagManager:
   - Bow
   - Arrow
   - Ground
+  - Cost
   layers:
   - Default
   - TransparentFX
