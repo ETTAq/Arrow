@@ -134,6 +134,12 @@ public class Arrow : MonoBehaviour
         // 속도에 비례한 최대 흔들림 각도
         float maxAngle = Mathf.Lerp(minShakeAngle, maxShakeAngle, impactSpeed / maxImpactSpeed);
 
+        // Z축 랜덤 오프셋
+        Quaternion randomOffset = Quaternion.Euler(0f, 0f, Random.Range(-8f, 8f));
+
+        // 최종 목표 회전 = 원래 impactRotation + 랜덤 Z축 오프셋
+        Quaternion finalRotation = impactRotation * randomOffset;
+
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -146,11 +152,13 @@ public class Arrow : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = impactRotation;
+        // 흔들림 끝난 뒤 랜덤 오프셋 적용
+        transform.rotation = finalRotation;
 
         yield return new WaitForSeconds(5f);
         gameObject.SetActive(false);
     }
+
 
 
 }
